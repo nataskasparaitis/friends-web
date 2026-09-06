@@ -1,9 +1,9 @@
 <%= form_with(model: friend) do |form| %>
   <% if friend.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(friend.errors.count, "error") %> prohibited this friend from being saved:</h2>
+    <div class="alert alert-danger" role="alert">
+      <h2 class="h5"><%= pluralize(friend.errors.count, "error") %> prohibited this friend from being saved:</h2>
 
-      <ul>
+      <ul class="mb-0">
         <% friend.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -34,11 +34,6 @@
   <br/>
   <div class="field form-group">
     <%= form.text_field :twitter, class:"form-control", placeholder:"Twitter" %>
-  </div>
-
-  <br/>
-  <div class="field form-group">
-    <%= form.number_field :user_id, id: :friend_user_id, class:"form-control", value: current_user.id, type: :hidden %>
   </div>
 
   <br/>

@@ -47,10 +47,13 @@
 
         
       </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <% if user_signed_in? %>
+        <%# searches your own friends only, because FriendsController#index scopes to current_user %>
+        <%= form_with url: friends_path, method: :get, class: "d-flex", role: "search" do |form| %>
+          <%= form.search_field :q, value: params[:q], placeholder: "Search friends", class: "form-control me-2", "aria-label": "Search friends" %>
+          <%= form.submit "Search", class: "btn btn-outline-success" %>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </nav>

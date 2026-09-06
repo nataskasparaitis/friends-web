@@ -1,13 +1,11 @@
 class FriendsController < ApplicationController
-  before_action :set_friend, only: %i[ show edit update destroy ]
-  #before_action :authenticate_user!, except: [:index, :show]  # if the user is not authenticated dont let them call anything except 'index' and 'show'
-  before_action :authenticate_user!   # if user not signed in, redirect to sign in page
-  before_action :correct_user, only: [:edit, :update, :destroy]   # make sure its the correct user but only for pages that want to 'edit', 'update', or 'destroy'
-
+  before_action :authenticate_user!                                    # every action requires a signed-in user
+  before_action :set_friend, only: %i[ show edit update destroy ]      # and every record is looked up through that user
 
   # GET /friends or /friends.json
   def index
-    @friends = Friend.all
+    @query   = params[:q].to_s.strip
+    @friends = current_user.friends.search(@query).order(:first_name, :last_name)
   end
 
   # GET /friends/1 or /friends/1.json
@@ -16,8 +14,7 @@ class FriendsController < ApplicationController
 
   # GET /friends/new
   def new
-    #@friend = Friend.new
-    @friend = current_user.friends.build  # modified so each user would have their own friend list
+    @friend = current_user.friends.build
   end
 
   # GET /friends/1/edit
@@ -26,8 +23,7 @@ class FriendsController < ApplicationController
 
   # POST /friends or /friends.json
   def create
-    #@friend = Friend.new(friend_params)
-    @friend = current_user.friends.build(friend_params)   # modified so each user would have their own friend list
+    @friend = current_user.friends.build(friend_params)
 
     respond_to do |format|
       if @friend.save
@@ -63,20 +59,22 @@ class FriendsController < ApplicationController
     end
   end
 
-  def correct_user
-    @friend = current_user.friends.find_by(id: params[:id])   # is the current user the one that created this specific friend 
-    redirect_to friends_path, notice: "Not Authorized To Edit This Friend" if @friend.nil?  # if not throw error message
-  end
-
-
   private
-    # Use callbacks to share common setup or constraints between actions.
+    # Scoping the lookup to current_user.friends means someone else's record is
+    # simply not found, so show, edit, update and destroy are all protected by
+    # the same query rather than by a separate ownership check.
     def set_friend
-      @friend = Friend.find(params.expect(:id))
+      @friend = current_user.friends.find_by(id: params[:id])
+      return if @friend
+
+      respond_to do |format|
+        format.html { redirect_to friends_path, alert: "That friend was not found in your list.", status: :see_other }
+        format.json { head :not_found }
+      end
     end
 
-    # Only allow a list of trusted parameters through.
+    # user_id is deliberately not permitted: ownership comes from current_user.
     def friend_params
-      params.expect(friend: [ :first_name, :last_name, :email, :phone, :twitter, :user_id ])
+      params.expect(friend: [ :first_name, :last_name, :email, :phone, :twitter ])
     end
 end

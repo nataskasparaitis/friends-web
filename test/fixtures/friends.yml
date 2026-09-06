@@ -1,15 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# Each friend belongs to a user, so ownership tests have one record on each side.
 
 one:
-  first_name: MyString
-  last_name: MyString
-  email: MyString
-  phone: MyString
-  twitter: MyString
+  first_name: Ada
+  last_name: Lovelace
+  email: ada@example.com
+  phone: 555-0100
+  twitter: "@ada"
+  user: one
 
 two:
-  first_name: MyString
-  last_name: MyString
-  email: MyString
-  phone: MyString
-  twitter: MyString
+  first_name: Grace
+  last_name: Hopper
+  email: grace@example.com
+  phone: 555-0200
+  twitter: "@grace"
+  user: two
