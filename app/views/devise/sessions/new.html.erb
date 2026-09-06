@@ -1,0 +1,32 @@
+<div class="card">
+  <h2 class="card-header">Log in</h2>
+  <div class="card-body">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="field form-group">
+        <p><%# f.label :email %></p>
+        <p><%= f.email_field :email, autofocus: true, autocomplete: "email", class:"form-control", placeholder:"Email" %></p>
+      </div>
+
+      <div class="field form-group">
+        <p><%# f.label :password %></p>
+        <p><%= f.password_field :password, autocomplete: "current-password", class:"form-control", placeholder:"Password" %></p>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="field">
+          <p>
+            <%= f.check_box :remember_me, clas:"form-check-input" %>
+            <%= f.label :remember_me %>
+          </p>
+        </div>
+      <% end %>
+
+      <div class="field form-group">
+        <p><%= f.submit "Log in", class:"btn btn-secondary" %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+</br>
+<%= render "devise/shared/links" %>
